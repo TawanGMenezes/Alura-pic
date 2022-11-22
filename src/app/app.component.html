@@ -1,1 +1,6 @@
-<app-photo></app-photo>
+<app-photo
+  *ngFor="let item of photos"
+  [url]="item.url"
+  [description]="item.description"
+  >></app-photo
+>
