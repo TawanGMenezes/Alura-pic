@@ -1,4 +1,4 @@
-export interface Photos {
+export interface Photo {
   allowComments: boolean;
   comments: number;
   description: string;
