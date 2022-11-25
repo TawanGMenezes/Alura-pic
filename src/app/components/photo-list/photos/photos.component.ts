@@ -28,5 +28,3 @@ export class PhotosComponent implements OnChanges {
     return newRows;
   }
 }
-
-// this.rows = this.groupColumns(this.photos);
