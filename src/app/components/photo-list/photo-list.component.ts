@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { Photo } from 'src/app/Interfaces/Photo';
+import { PhotoService } from 'src/app/services/photo.service';
 
 @Component({
   selector: 'app-photo-list',
@@ -12,10 +13,17 @@ export class PhotoListComponent implements OnInit, OnDestroy {
   photos: Photo[] = [];
   filter: string = '';
   debounce: Subject<string> = new Subject<string>();
+  hasmore: boolean = true;
+  currentPage: number = 1;
+  userName: string = '';
 
-  constructor(private activatedRouted: ActivatedRoute) {}
+  constructor(
+    private activatedRouted: ActivatedRoute,
+    private photoService: PhotoService
+  ) {}
 
   ngOnInit() {
+    this.userName = this.activatedRouted.snapshot.params['userName'];
     this.photos = this.activatedRouted.snapshot.data['photos'];
     this.debounce
       .pipe(debounceTime(300))
@@ -30,5 +38,16 @@ export class PhotoListComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.debounce.unsubscribe();
+  }
+
+  load() {
+    this.photoService
+      .listFromUserPaginated(this.userName, ++this.currentPage)
+      .subscribe((photos) => {
+        this.photos = this.photos.concat(photos);
+        if (!photos.length) {
+          this.hasmore = false;
+        }
+      });
   }
 }
